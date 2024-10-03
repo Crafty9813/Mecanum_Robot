@@ -1,0 +1,119 @@
+int ENA_1 = 2;
+int ENB_1 = 3;
+int FL_1 = 4;
+int FL_2 = 5;
+int FR_1 = 6;
+int FR_2 = 7;
+
+
+int ENA_2 = 8;
+int ENB_2 = 9;
+int BL_1 = 10;
+int BL_2 = 11;
+int BR_1 = 12;
+int BR_2 = 13;
+
+
+int motorSpeed = 0;
+int turnSpeed = 0;
+int strafeSpeed = 0;
+
+
+const byte moveUpDown = A0;
+const byte turnPin = A1;
+const byte strafePin = A2;
+
+
+void setup() {
+  pinMode(moveUpDown, INPUT);
+  pinMode(turnPin, INPUT);
+  pinMode(strafePin, INPUT);
+
+
+  pinMode(ENA_1, OUTPUT);
+  pinMode(ENB_1, OUTPUT);
+  pinMode(FL_1, OUTPUT);
+  pinMode(FL_2, OUTPUT);
+  pinMode(FR_1, OUTPUT);
+  pinMode(FR_2, OUTPUT);
+
+
+  pinMode(ENA_2, OUTPUT);
+  pinMode(ENB_2, OUTPUT);
+  pinMode(BL_1, OUTPUT);
+  pinMode(BL_2, OUTPUT);
+  pinMode(BR_1, OUTPUT);
+  pinMode(BR_2, OUTPUT);
+}
+
+
+void loop() {
+  int moveUpDownValue = pulseIn(moveUpDown, HIGH, 28000);
+  int turnValue = pulseIn(turnPin, HIGH, 28000);
+  int strafeValue = pulseIn(strafePin, HIGH, 28000);
+
+
+  if (moveUpDownValue > 1530) {
+    motorSpeed = map(moveUpDownValue, 1530, 2000, 0, 254);
+  } else if (moveUpDownValue < 1470) {
+    motorSpeed = map(moveUpDownValue, 1000, 1470, -254, 0);
+  } else {
+    motorSpeed = 0;
+  }
+
+
+  if (turnValue > 1530) {
+    turnSpeed = map(turnValue, 1530, 2000, 0, 254);
+  } else if (turnValue < 1470) {
+    turnSpeed = map(turnValue, 1000, 1470, -254, 0);
+  } else {
+    turnSpeed = 0;
+  }
+
+
+  if (strafeValue > 1540) {
+    strafeSpeed = map(strafeValue, 1530, 2000, 0, -254);
+  } else if (strafeValue < 1460) {
+    strafeSpeed = map(strafeValue, 1000, 1470, 254, 0);
+  } else {
+    strafeSpeed = 0;
+  }
+
+
+  motorSpeed = constrain(motorSpeed, -254, 254);
+  turnSpeed = constrain(turnSpeed, -254, 254);
+  strafeSpeed = constrain(strafeSpeed, -254, 254);
+
+
+  int frontLeftSpeed = motorSpeed + strafeSpeed - turnSpeed;
+  int frontRightSpeed = motorSpeed - strafeSpeed + turnSpeed;
+  int backLeftSpeed = motorSpeed - strafeSpeed - turnSpeed;
+  int backRightSpeed = motorSpeed + strafeSpeed + turnSpeed;
+
+
+  // control first set of motors (front left and back left)
+  setMotorSpeed(ENA_1, FL_1, FL_2, frontLeftSpeed);
+  setMotorSpeed(ENA_2, BL_1, BL_2, backLeftSpeed);
+
+
+  // control second set of motors (front right and back right)
+  setMotorSpeed(ENB_1, FR_1, FR_2, frontRightSpeed);
+  setMotorSpeed(ENB_2, BR_1, BR_2, backRightSpeed);
+}
+
+
+void setMotorSpeed(int enablePin, int motor1Pin, int motor2Pin, int speed) {
+  if (speed > 0) {
+    digitalWrite(motor1Pin, LOW);
+    digitalWrite(motor2Pin, HIGH);
+  } else if (speed < 0) {
+    digitalWrite(motor1Pin, HIGH);
+    digitalWrite(motor2Pin, LOW);
+    speed = -speed; // make speed positive for PWM
+  } else {
+    digitalWrite(motor1Pin, LOW);
+    digitalWrite(motor2Pin, LOW);
+  }
+  analogWrite(enablePin, speed);
+}
+
