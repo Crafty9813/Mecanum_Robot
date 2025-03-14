@@ -29,14 +29,12 @@ void setup() {
   pinMode(turnPin, INPUT);
   pinMode(strafePin, INPUT);
 
-
   pinMode(ENA_1, OUTPUT);
   pinMode(ENB_1, OUTPUT);
   pinMode(FL_1, OUTPUT);
   pinMode(FL_2, OUTPUT);
   pinMode(FR_1, OUTPUT);
   pinMode(FR_2, OUTPUT);
-
 
   pinMode(ENA_2, OUTPUT);
   pinMode(ENB_2, OUTPUT);
@@ -52,55 +50,47 @@ void loop() {
   int turnValue = pulseIn(turnPin, HIGH, 28000);
   int strafeValue = pulseIn(strafePin, HIGH, 28000);
 
-
   if (moveUpDownValue > 1530) {
-    motorSpeed = map(moveUpDownValue, 1530, 2000, 0, 254);
+    motorSpeed = map(moveUpDownValue, 1530, 2000, 0, 255);
   } else if (moveUpDownValue < 1470) {
-    motorSpeed = map(moveUpDownValue, 1000, 1470, -254, 0);
+    motorSpeed = map(moveUpDownValue, 1000, 1470, -255, 0);
   } else {
     motorSpeed = 0;
   }
 
-
   if (turnValue > 1530) {
-    turnSpeed = map(turnValue, 1530, 2000, 0, 254);
+    turnSpeed = map(turnValue, 1530, 2000, 0, 255);
   } else if (turnValue < 1470) {
-    turnSpeed = map(turnValue, 1000, 1470, -254, 0);
+    turnSpeed = map(turnValue, 1000, 1470, -255, 0);
   } else {
     turnSpeed = 0;
   }
 
-
   if (strafeValue > 1540) {
-    strafeSpeed = map(strafeValue, 1530, 2000, 0, -254);
+    strafeSpeed = map(strafeValue, 1530, 2000, 0, -255);
   } else if (strafeValue < 1460) {
-    strafeSpeed = map(strafeValue, 1000, 1470, 254, 0);
+    strafeSpeed = map(strafeValue, 1000, 1470, 255, 0);
   } else {
     strafeSpeed = 0;
   }
 
-
-  motorSpeed = constrain(motorSpeed, -254, 254);
-  turnSpeed = constrain(turnSpeed, -254, 254);
-  strafeSpeed = constrain(strafeSpeed, -254, 254);
-
+  motorSpeed = constrain(motorSpeed, -255, 255);
+  turnSpeed = constrain(turnSpeed, -255, 255);
+  strafeSpeed = constrain(strafeSpeed, -255, 255);
 
   int frontLeftSpeed = motorSpeed + strafeSpeed - turnSpeed;
   int frontRightSpeed = motorSpeed - strafeSpeed + turnSpeed;
   int backLeftSpeed = motorSpeed - strafeSpeed - turnSpeed;
   int backRightSpeed = motorSpeed + strafeSpeed + turnSpeed;
 
-
   // control first set of motors (front left and back left)
   setMotorSpeed(ENA_1, FL_1, FL_2, frontLeftSpeed);
   setMotorSpeed(ENA_2, BL_1, BL_2, backLeftSpeed);
-
 
   // control second set of motors (front right and back right)
   setMotorSpeed(ENB_1, FR_1, FR_2, frontRightSpeed);
   setMotorSpeed(ENB_2, BR_1, BR_2, backRightSpeed);
 }
-
 
 void setMotorSpeed(int enablePin, int motor1Pin, int motor2Pin, int speed) {
   if (speed > 0) {
@@ -116,4 +106,3 @@ void setMotorSpeed(int enablePin, int motor1Pin, int motor2Pin, int speed) {
   }
   analogWrite(enablePin, speed);
 }
-
