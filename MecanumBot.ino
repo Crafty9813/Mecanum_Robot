@@ -1,3 +1,5 @@
+// NOTE: this is for teleop now
+
 int ENA_1 = 2;
 int ENB_1 = 3;
 int FL_1 = 4;
@@ -83,11 +85,11 @@ void loop() {
   int backLeftSpeed = motorSpeed - strafeSpeed - turnSpeed;
   int backRightSpeed = motorSpeed + strafeSpeed + turnSpeed;
 
-  // control first set of motors (front left and back left)
+  // Control first set of motors (front left and back left)
   setMotorSpeed(ENA_1, FL_1, FL_2, frontLeftSpeed);
   setMotorSpeed(ENA_2, BL_1, BL_2, backLeftSpeed);
 
-  // control second set of motors (front right and back right)
+  // Control second set of motors (front right and back right)
   setMotorSpeed(ENB_1, FR_1, FR_2, frontRightSpeed);
   setMotorSpeed(ENB_2, BR_1, BR_2, backRightSpeed);
 }
@@ -99,7 +101,7 @@ void setMotorSpeed(int enablePin, int motor1Pin, int motor2Pin, int speed) {
   } else if (speed < 0) {
     digitalWrite(motor1Pin, HIGH);
     digitalWrite(motor2Pin, LOW);
-    speed = -speed; // make speed positive for PWM
+    speed = -speed; // Make speed positive for PWM
   } else {
     digitalWrite(motor1Pin, LOW);
     digitalWrite(motor2Pin, LOW);
